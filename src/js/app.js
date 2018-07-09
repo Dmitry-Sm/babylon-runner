@@ -51,28 +51,10 @@ $(document).ready(()=>{
   let mainCamera = createCamera(scene, cameraPos)
 
 
-//   var lensEffect = new BABYLON.LensRenderingPipeline('lens', {
-//     edge_blur: 5.0,
-//     chromatic_aberration: 1.0,
-//     // distortion: 1.0,
-//     dof_focus_distance: 0,
-//     dof_aperture: 0.30,			// set this very high for tilt-shift effect
-//     grain_amount: 1.0,
-//     dof_pentagon: true,
-//     blur_noise: true,
-//     // dof_gain: 2.0,
-//     // // dof_threshold: 102.0,
-//     // dof_darken: 0.25
-// }, scene, 1.0, mainCamera);
+  let color_curve = initColorCurve()
+  initPipeLine(scene, mainCamera, color_curve)
 
-let color_curve = initColorCurve()
-initPipeLine(scene, mainCamera, color_curve)
-
-
-var pbr = new BABYLON.PBRMetallicRoughnessMaterial("pbr", scene);
-pbr.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("assets/textures/environment.dds", scene);
-    
-
+  
 
 
   let lightPos = new V3(0, 4, -4)
@@ -87,23 +69,25 @@ pbr.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("assets/t
 
 
   let ground_radius = 3
-  var groundMaterial = new BABYLON.StandardMaterial("ground", scene);
-  // let groundMaterial = pbr.clone();
+  var groundMaterial = new BABYLON.StandardMaterial("ground", scene)
 
+  // var pbr = new BABYLON.PBRMetallicRoughnessMaterial("pbr", scene) // Нет теней
+  // pbr.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("assets/textures/environment.dds", scene)
+  // let groundMaterial = pbr.clone();
   // groundMaterial.metallic = 0;
   // groundMaterial.roughness = 0.01
   // groundMaterial.baseColor = BABYLON.Color3.White().scale(0.4)
 
-  groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-  groundMaterial.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+  groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0)
+  groundMaterial.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2)
   
 	groundMaterial.bumpTexture = new BABYLON.Texture("http://www.synergy-development.fr/equalonyzer/images/grained_uv.png", scene);
-  groundMaterial.bumpTexture.uScale = 4;
-  groundMaterial.bumpTexture.vScale = 4;
+  groundMaterial.bumpTexture.uScale = 16
+  groundMaterial.bumpTexture.vScale = 16
 
   groundMaterial.reflectionTexture = new BABYLON.Texture("http://www.synergy-development.fr/equalonyzer/images/spheremap.jpg", scene);
-  groundMaterial.reflectionTexture.level = 0.4;
-  groundMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SPHERICAL_MODE;
+  groundMaterial.reflectionTexture.level = 0.4
+  groundMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SPHERICAL_MODE
 
 
   let ground_optioins = {
@@ -115,7 +99,7 @@ pbr.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("assets/t
     },
     diameter: ground_radius*2,
     height: 4,
-    tessellation: 24
+    tessellation: 32
   }
   let ground = createCylinder(scene, ground_optioins)
   ground.receiveShadows = true
@@ -130,8 +114,6 @@ pbr.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("assets/t
   blue.reflectionTexture = new BABYLON.Texture("http://www.synergy-development.fr/equalonyzer/images/spheremap.jpg", scene);
   blue.reflectionTexture.level = 0.1;
   blue.reflectionTexture.coordinatesMode = BABYLON.Texture.SPHERICAL_MODE;
-
-  // let blue = pbr.clone();
 
   blue.metallic = 0;
   blue.roughness = 0.01

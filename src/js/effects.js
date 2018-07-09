@@ -30,10 +30,10 @@ const initPipeLine = (scene, camera, color_curve, options) => {
   defaultPipeline.bloomScale = 0.4
 
   defaultPipeline.chromaticAberrationEnabled = true
-  defaultPipeline.chromaticAberration.aberrationAmount = 10
+  defaultPipeline.chromaticAberration.aberrationAmount = 4
 
   defaultPipeline.grainEnabled = true
-  defaultPipeline.grain.intensity = 10
+  defaultPipeline.grain.intensity = 16
   defaultPipeline.grain.animated = true
   
 

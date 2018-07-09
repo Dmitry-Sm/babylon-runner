@@ -93,7 +93,7 @@ const Controller = () => {
 
 
   function mouseup (event) {
-    // mouse_pressed = false
+    mouse_pressed = false
 
   }
 
