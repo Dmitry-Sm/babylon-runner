@@ -1,0 +1,92 @@
+$green: #392;
+
+body {
+  margin: 0;
+
+}
+
+#render-canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.fps {
+  position: absolute;
+  color: white;
+  font-size: 24px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS';
+}
+
+.timer {
+  position: absolute;
+  color: gray;
+  right: 5px;
+  font-size: 20px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS';
+}
+
+.box-pos {
+  position: absolute;
+  color: gray;
+  right: 5px;
+  top: 25px;
+  font-size: 20px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS';
+}
+
+.slider-wrapper, #r1 {
+  position: absolute;
+  bottom: 10px;
+  display: inline-block;
+  width: 200px;
+  height: 150px;
+  padding: 0;
+}
+
+
+.slidecontainer {
+  position: absolute;
+  bottom: 0;
+  width: 80%; 
+  height: 8%;
+  display: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  color: white;
+}
+
+.slider {
+  position: absolute;
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  border-radius: 10px;
+
+  top: 0;
+  bottom: 0;
+  margin: auto;
+
+  width: 100%; /* Full-width */
+  height: 15px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  border-radius: 50%;
+  width: calc(2vh + 4vw); /* Set a specific slider handle width */
+  height: calc(2vh + 4vw);
+  max-width: 90px;
+  max-height: 90px;
+  background: #4CAF50; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
