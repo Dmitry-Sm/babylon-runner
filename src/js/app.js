@@ -68,7 +68,7 @@ $(document).ready(()=>{
 
 
 
-  let ground_radius = 32
+  // let ground_radius = 32
   let groundMaterial = createMaterial(scene, {
     // diffuseTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
     ambientTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
@@ -86,25 +86,25 @@ $(document).ready(()=>{
   })
 
 
-  let ground_optioins = {
-    position: {
-      y: -ground_radius
-    },
-    rotation: {
-      z: Math.PI/2
-    },
-    diameter: ground_radius*2,
-    height: 4,
-    tessellation: 128
-  }
-  let ground = createCylinder(scene, ground_optioins)
-  ground.receiveShadows = true
+  // let ground_optioins = {
+  //   position: {
+  //     y: -ground_radius
+  //   },
+  //   rotation: {
+  //     z: Math.PI/2
+  //   },
+  //   diameter: ground_radius*2,
+  //   height: 4,
+  //   tessellation: 128
+  // }
+  // let ground = createCylinder(scene, ground_optioins)
+  // ground.receiveShadows = true
 
-  ground.material = groundMaterial;
+  // ground.material = groundMaterial;
 
 
-  var red = new BABYLON.StandardMaterial("red", scene)
-  red.diffuseColor.copyFromFloats(0.6, 0.2, 0.2);
+  // var red = new BABYLON.StandardMaterial("red", scene)
+  // red.diffuseColor.copyFromFloats(0.6, 0.2, 0.2);
 
   let blue = createMaterial(scene, {
     diffuseTexture: new BABYLON.Texture('./assets/textures/stone_texture.png', scene),
@@ -138,75 +138,90 @@ $(document).ready(()=>{
   })
 
 
-  let player_sphere_options = {
-    position: {
-      x: 0,
-      y: 0.3,
-      z: 0
-    },
-    diameter: 0.6,
-    material: blue
-  }
-  let sphere = createSphere(scene, player_sphere_options)
-  shadows.addShadowCaster(sphere);
+  // let player_sphere_options = {
+  //   position: {
+  //     x: 0,
+  //     y: 0.3,
+  //     z: 0
+  //   },
+  //   diameter: 0.6,
+  //   material: blue
+  // }
+  // let sphere = createSphere(scene, player_sphere_options)
+  // shadows.addShadowCaster(sphere);
 
-  let playaer_options = {
+  // let playaer_options = {
 
-  }
-  let player = new Player(scene, sphere, mainCamera, playaer_options)
+  // }
+  // let player = new Player(scene, sphere, mainCamera, playaer_options)
 
 
-  let boxes = []
+  // let boxes = []
 
-  const newBox = (i, x) => {
-    let box_options = {
-      parent: ground,
-      scaling: {
-        width: 0.1,
-        height: 1,
-        depth: 0.8
-      },
-      position: {
-        x: 0,
-        y: x // x in Global
-      },
-      rotation: {
-        y: -i
-      },
-      pivot: {
-        x: -ground_radius
-      },
-      material: wood
-    }
-    let box = createBox(scene, box_options)
-    shadows.addShadowCaster(box);
+  // const newBox = (i, x) => {
+  //   let box_options = {
+  //     parent: ground,
+  //     scaling: {
+  //       width: 0.1,
+  //       height: 1,
+  //       depth: 0.8
+  //     },
+  //     position: {
+  //       x: 0,
+  //       y: x // x in Global
+  //     },
+  //     rotation: {
+  //       y: -i
+  //     },
+  //     pivot: {
+  //       x: -ground_radius
+  //     },
+  //     material: wood
+  //   }
+  //   let box = createBox(scene, box_options)
+  //   shadows.addShadowCaster(box);
     
-    // shadows.getShadowMap().renderList.push(box);
-    return box
-  }
+  //   // shadows.getShadowMap().renderList.push(box);
+  //   return box
+  // }
   
 
-  let box_num = 24
-  let x = 0
-  for (let i = 0; i < box_num; i++) {
-    let new_x = -ground_radius + Math.ceil(Math.random()*3 - 2) * 1.4
-    while (x == new_x) {
-      new_x = -ground_radius + Math.ceil(Math.random()*3 - 2) * 1.4
-    }
-    x = new_x
-    let y = Math.PI*2/(box_num + 1)*(i+1)
-    boxes.push(newBox(y, x))
+  // let box_num = 24
+  // let x = 0
+  // for (let i = 0; i < box_num; i++) {
+  //   let new_x = -ground_radius + Math.ceil(Math.random()*3 - 2) * 1.4
+  //   while (x == new_x) {
+  //     new_x = -ground_radius + Math.ceil(Math.random()*3 - 2) * 1.4
+  //   }
+  //   x = new_x
+  //   let y = Math.PI*2/(box_num + 1)*(i+1)
+  //   boxes.push(newBox(y, x))
+  // }
+
+  // for(let b of boxes) {
+  //   b.scaling = new V3(1, 1.2, 0.1)
+  // }
+
+
+
+
+
+
+  const onLoadSuccess = (task) => {
+    let head = task.loadedMeshes[0]
+    head.position = V3.Zero()
+    // head.material = blue
+    head.position.y = -2
   }
 
-  for(let b of boxes) {
-    b.scaling = new V3(1, 1.2, 0.1)
+
+  const onLoadError = (task) => {
+    console.log("error while loading " + task.name);
   }
 
+  ImportMesh(scene, 'untitled.babylon', onLoadSuccess, onLoadError)
 
-
-
-
-
+  
 
   const key_pressed = (event) => {
     switch (event.direction) {
@@ -252,23 +267,23 @@ $(document).ready(()=>{
     if (scene) {
       time += 0.0004;
 
-      player.object.material = blue
-      for(let b of boxes) {
-        if (player.object.intersectsMesh(b, true)) {
-          player.object.material = red
-          delta = -0.7
-        } 
-      }
-      if (delta < 4) {
-        delta += 0.01
-      }
-      ground.rotation.x -= 0.0002 * delta
-      player.animation(delta)
+      // player.object.material = blue
+      // for(let b of boxes) {
+      //   if (player.object.intersectsMesh(b, true)) {
+      //     player.object.material = red
+      //     delta = -0.7
+      //   } 
+      // }
+      // if (delta < 4) {
+      //   delta += 0.01
+      // }
+      // ground.rotation.x -= 0.0002 * delta
+      // player.animation(delta)
 
 
       // updateLinePath(line, [player.object.position, boxes[0].getAbsolutePosition()])
 
-      scene.render();
+      scene.render()
     }
   })
 
