@@ -12,32 +12,39 @@ const initColorCurve = (options) => {
 }
 
 const initPipeLine = (scene, camera, color_curve, options) => {
-  var defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [camera]);
+  var pipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene, [camera]);
 
-  defaultPipeline.imageProcessing.colorCurves = color_curve
-  defaultPipeline.depthOfField.focalLength = 150
+  pipeline.imageProcessing.colorCurves = color_curve
+  pipeline.depthOfField.focalLength = 150
 
   // Multisample Anti-Aliasing
-  // defaultPipeline.samples = 1
+  // pipeline.samples = 1
 
   // Fast Approximate Anti-Aliasing
-  defaultPipeline.fxaaEnabled = true
+  pipeline.fxaaEnabled = true
 
-  defaultPipeline.bloomEnabled = true
-  defaultPipeline.bloomKernel = 100
-  defaultPipeline.bloomWeight = 0.2
-  defaultPipeline.bloomThreshold = 0.01
-  defaultPipeline.bloomScale = 0.4
+  
+  pipeline.depthOfFieldBlurLevel = BABYLON.DepthOfFieldEffectBlurLevel.Medium;
+  pipeline.depthOfFieldEnabled = true;
+  pipeline.depthOfField.focalLength = 300;
+  pipeline.depthOfField.fStop = 5;
+  pipeline.depthOfField.focusDistance = 4000;
 
-  defaultPipeline.chromaticAberrationEnabled = true
-  defaultPipeline.chromaticAberration.aberrationAmount = 4
+  pipeline.bloomEnabled = true
+  pipeline.bloomKernel = 100
+  pipeline.bloomWeight = 0.2
+  pipeline.bloomThreshold = 0.01
+  pipeline.bloomScale = 0.4
 
-  defaultPipeline.grainEnabled = true
-  defaultPipeline.grain.intensity = 16
-  defaultPipeline.grain.animated = true
+  pipeline.chromaticAberrationEnabled = true
+  pipeline.chromaticAberration.aberrationAmount = 4
+
+  pipeline.grainEnabled = true
+  pipeline.grain.intensity = 16
+  pipeline.grain.animated = true
   
 
-  return defaultPipeline
+  return pipeline
 }
 
 export {

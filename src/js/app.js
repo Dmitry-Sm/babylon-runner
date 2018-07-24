@@ -19,7 +19,7 @@ import {
 } from './particleSistems'
 
 import {
-  createShaderMaterial
+  createShaderMaterial, createMaterial
 } from './materials'
 
 import {
@@ -52,12 +52,12 @@ $(document).ready(()=>{
 
 
   let color_curve = initColorCurve()
-  initPipeLine(scene, mainCamera, color_curve)
+  let pipeLine = initPipeLine(scene, mainCamera, color_curve)
 
   
 
 
-  let lightPos = new V3(0, 4, -4)
+  let lightPos = new V3(0, 5, -8)
   let rayPos = new V3(0, 10, 20)
   let light = addLight(scene, lightPos)
   
@@ -68,26 +68,22 @@ $(document).ready(()=>{
 
 
 
-  let ground_radius = 3
-  var groundMaterial = new BABYLON.StandardMaterial("ground", scene)
-
-  // var pbr = new BABYLON.PBRMetallicRoughnessMaterial("pbr", scene) // Нет теней
-  // pbr.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("assets/textures/environment.dds", scene)
-  // let groundMaterial = pbr.clone();
-  // groundMaterial.metallic = 0;
-  // groundMaterial.roughness = 0.01
-  // groundMaterial.baseColor = BABYLON.Color3.White().scale(0.4)
-
-  groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0)
-  groundMaterial.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2)
-  
-	groundMaterial.bumpTexture = new BABYLON.Texture("http://www.synergy-development.fr/equalonyzer/images/grained_uv.png", scene);
-  groundMaterial.bumpTexture.uScale = 16
-  groundMaterial.bumpTexture.vScale = 16
-
-  groundMaterial.reflectionTexture = new BABYLON.Texture("http://www.synergy-development.fr/equalonyzer/images/spheremap.jpg", scene);
-  groundMaterial.reflectionTexture.level = 0.4
-  groundMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SPHERICAL_MODE
+  let ground_radius = 32
+  let groundMaterial = createMaterial(scene, {
+    // diffuseTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
+    ambientTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
+    // emissiveTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
+    // specularTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
+    specularPower: 1,
+    // reflectionTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
+    // reflectionTextureLevel: 2,
+    bumpTexture: new BABYLON.Texture('./assets/textures/grass_bump.png', scene),
+    bumpTextureLevel: 1,
+    uScale: 128,
+    vScale: 2,
+    // cameraExposure: 1,
+    // cameraContrast: 1
+  })
 
 
   let ground_optioins = {
@@ -99,31 +95,53 @@ $(document).ready(()=>{
     },
     diameter: ground_radius*2,
     height: 4,
-    tessellation: 32
+    tessellation: 128
   }
   let ground = createCylinder(scene, ground_optioins)
   ground.receiveShadows = true
+
   ground.material = groundMaterial;
 
 
   var red = new BABYLON.StandardMaterial("red", scene)
   red.diffuseColor.copyFromFloats(0.6, 0.2, 0.2);
 
-  var blue = new BABYLON.StandardMaterial("blue", scene)
-  blue.diffuseColor.copyFromFloats(0.1, 0.3, 0.6);
-  blue.reflectionTexture = new BABYLON.Texture("http://www.synergy-development.fr/equalonyzer/images/spheremap.jpg", scene);
-  blue.reflectionTexture.level = 0.1;
-  blue.reflectionTexture.coordinatesMode = BABYLON.Texture.SPHERICAL_MODE;
-
-  blue.metallic = 0;
-  blue.roughness = 0.01
-  blue.baseColor = BABYLON.Color3.White().scale(0.4)
+  let blue = createMaterial(scene, {
+    diffuseTexture: new BABYLON.Texture('./assets/textures/stone_texture.png', scene),
+    ambientTexture: new BABYLON.Texture('./assets/textures/stone_ambient.png', scene),
+    // emissiveTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
+    // specularTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
+    specularPower: 1,
+    // reflectionTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
+    // reflectionTextureLevel: 2,
+    bumpTexture: new BABYLON.Texture('./assets/textures/stone_normal.png', scene),
+    bumpTextureLevel: 1,
+    uScale: 1,
+    vScale: 1,
+    // cameraExposure: 1,
+    // cameraContrast: 1
+  })
+  let wood = createMaterial(scene, {
+    diffuseTexture: new BABYLON.Texture('./assets/textures/wood_texture.png', scene),
+    ambientTexture: new BABYLON.Texture('./assets/textures/wood_ambient.png', scene),
+    // emissiveTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
+    // specularTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
+    specularPower: 0.1,
+    // reflectionTexture: new BABYLON.Texture('./assets/textures/grass_texture.png', scene),
+    // reflectionTextureLevel: 2,
+    bumpTexture: new BABYLON.Texture('./assets/textures/wood_normal.png', scene),
+    bumpTextureLevel: 2,
+    uScale: 1,
+    vScale: 2,
+    // cameraExposure: 1,
+    // cameraContrast: 1
+  })
 
 
   let player_sphere_options = {
     position: {
       x: 0,
-      y: 0.2,
+      y: 0.3,
       z: 0
     },
     diameter: 0.6,
@@ -158,7 +176,7 @@ $(document).ready(()=>{
       pivot: {
         x: -ground_radius
       },
-      material: blue
+      material: wood
     }
     let box = createBox(scene, box_options)
     shadows.addShadowCaster(box);
@@ -168,7 +186,7 @@ $(document).ready(()=>{
   }
   
 
-  let box_num = 10
+  let box_num = 24
   let x = 0
   for (let i = 0; i < box_num; i++) {
     let new_x = -ground_radius + Math.ceil(Math.random()*3 - 2) * 1.4
@@ -226,6 +244,8 @@ $(document).ready(()=>{
   let delta = 0.4
   //////////////
   engine.runRenderLoop(function () {
+    // pipeLine.depthOfField.focusDistance = 6000 + (6000 * (Math.sin((new Date).getTime()/400)+1)/2)
+
     fpsLable.innerHTML = Math.ceil(engine.getFps())
 
 
@@ -242,8 +262,8 @@ $(document).ready(()=>{
       if (delta < 4) {
         delta += 0.01
       }
-      ground.rotation.x -= 0.01 * delta
-      player.animation()
+      ground.rotation.x -= 0.0002 * delta
+      player.animation(delta)
 
 
       // updateLinePath(line, [player.object.position, boxes[0].getAbsolutePosition()])
