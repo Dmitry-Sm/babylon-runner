@@ -12,23 +12,23 @@ const createCamera = (scene, position) => {
     // let camera = new BABYLON.FreeCamera("camera1", position, scene);
     // camera.setTarget(v0)
 
-    var camera = new BABYLON.ArcRotateCamera("Camera",  -Math.PI/2, Math.PI/4, radius, v0, scene, true)
+    var camera = new BABYLON.ArcRotateCamera("Camera",  -Math.PI/2, Math.PI/8, radius, v0, scene, true)
     // var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI * 1.25, Math.PI/2, radius, v0, scene)
 
     camera.lowerRadiusLimit = 0.4;
     camera.upperRadiusLimit = 160;
     camera.wheelDeltaPercentage = 0.05;
 
-    camera.attachControl(document.getElementById("render-canvas"), false)
+    // camera.attachControl(document.getElementById("render-canvas"), false)
     return camera
 }
 
 
 const addLight = (scene, position) => {
     // var light = new BABYLON.PointLight("light1", position, scene);
-    var light = new BABYLON.SpotLight("spotLight1", position, new BABYLON.Vector3(0, -20, 40), Math.PI / 2, 50, scene);
+    var light = new BABYLON.SpotLight("spotLight1", position, new BABYLON.Vector3(0, -20, 20), Math.PI / 2, 50, scene);
     light.position = position
-    light.intensity = 1.2;
+    // light.intensity = 1.2;
     // light.range = 30
 //  var light = new BABYLON.DirectionalLight("direct", new BABYLON.Vector3(-1, -2, 2).normalize(), scene);
 // light.position = new BABYLON.Vector3(10, 30, -15);
@@ -52,7 +52,7 @@ const addGodRay = (scene, position, scale, camera, engine) => {
 const addShadows = (light) => {
     var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
     shadowGenerator.forceBackFacesOnly = true
-    shadowGenerator.bias = 0.0004
+    shadowGenerator.bias = 0.0002
     shadowGenerator.usePercentageCloserFiltering = true
 
     shadowGenerator.setDarkness(0.0);
@@ -81,10 +81,6 @@ const createCylinder = (scene, options) => {
 
   return cylinder
 }
-
-
-
-
 
 const setOptions = (object, options) => {
     if (options.pivot) {
@@ -136,10 +132,118 @@ const ImportMesh = (scene, fileName, onSuccess, onError, onProgress) => {
     
     meshTask.onSuccess = onSuccess
     assetsManager.onTaskError = onError
-    assetsManager.useDefaultLoadingScreen = false
+    assetsManager.useDefaultLoadingScreen = false;
 
-    assetsManager.load()
+
+    assetsManager.load();
     return meshTask
+}
+
+
+const particleSistem = (scene) => {
+    var particleSystem = new BABYLON.GPUParticleSystem("particles", 25000, scene);
+
+    //Texture of each particle
+    let txtr = new BABYLON.Texture("assets/textures/flare.png", scene);
+    txtr.uScale = 0.1;
+    txtr.vScale = 16;
+    particleSystem.particleTexture = txtr
+
+    // Where the particles come from
+    // particleSystem.emitter = emitter.position
+    particleSystem.emitter = new BABYLON.Vector3(0, 0, -10)
+    particleSystem.minEmitBox = new BABYLON.Vector3(30, -20, 10); // Starting all from
+    particleSystem.maxEmitBox = new BABYLON.Vector3(-30, -20, 10); // To...
+
+    // Colors of all particles
+    // particleSystem.color1 = new BABYLON.Color4(0.7, 0.8, 1.0, 1.0);
+    // particleSystem.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 1.0);
+    // particleSystem.colorDead = new BABYLON.Color4(0.1, 0, 0, 0.0);
+
+    // Size of each particle (random between...
+    particleSystem.minSize = 0.1;
+    particleSystem.maxSize = 0.4;
+
+    // Life time of each particle (random between...
+    particleSystem.minLifeTime = 0.1;
+    particleSystem.maxLifeTime = 2;
+
+    // Emission rate
+    particleSystem.emitRate = 24500;
+
+    // Blend mode : BLENDMODE_ONEONE, or BLENDMODE_STANDARD
+    particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+
+    // Set the gravity of all particles
+    particleSystem.gravity = new BABYLON.Vector3(0, 40, 0);
+
+    // Direction of each particle after it has been emitted
+    particleSystem.direction1 = new BABYLON.Vector3(0, 5, 25);
+    particleSystem.direction2 = new BABYLON.Vector3(0, 5, 25);
+
+    // Angular speed, in radians
+    particleSystem.minAngularSpeed = 0;
+    particleSystem.maxAngularSpeed = 0;
+
+    // Speed
+    particleSystem.minEmitPower = 1.8;
+    particleSystem.maxEmitPower = 2;
+    particleSystem.updateSpeed = 0.004;
+
+    // Start the particle system
+    particleSystem.start();
+
+    return particleSystem
+}
+
+
+const solidParticleSistem = (scene, material, camera, engine) => {
+    var sps = new BABYLON.SolidParticleSystem("sps", scene);
+    var model = createRibbon(scene)
+    sps.addShape(model, 30);
+    sps.buildMesh();
+    var particles = sps.mesh
+    particles.material = material
+    // new BABYLON.VolumetricLightScatteringPostProcess("vl", 2, camera, particles, 75, BABYLON.Texture.BILINEAR_SAMPLINGMODE, engine, false);
+    
+
+    var particleHeight = 4;
+
+    // sps.computeParticleTexture = false
+
+    var areaSize = 2.0;
+    
+    var initParticle = function(particle) {
+        
+        particle.position.x = 40 * areaSize * (Math.random() - 0.5);
+        particle.position.y = -10;
+        particle.position.z = 0;
+            
+        particle.pivot.y = 10;
+        particle.rotation.x = Math.random() * Math.PI * 2;
+        particle.material = material
+
+        particle.scale.z = particleHeight; 
+    }
+
+    var updateParticle = function(particle) {
+        // particle.velocity--;
+        particle.rotation.x -= 0.014;
+
+        if (particle.velocity < 0) {
+          particle.alive = false;
+          SPS.recycleParticle(particle);    // call to your own recycle function
+        }
+    }
+    model.dispose()
+
+    sps.updateParticle = initParticle;
+    sps.setParticles();
+    // sps.computeParticleColor = false
+
+    sps.updateParticle = updateParticle;
+
+    return sps
 }
 
 
@@ -200,5 +304,7 @@ export {
     createBox,
     createRibbon,
     ImportMesh,
+    particleSistem,
+    solidParticleSistem,
     addFog
 }
